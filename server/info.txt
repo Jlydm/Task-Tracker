@@ -1,0 +1,23 @@
+server/
+|-- node_modules/
+|    |-- modulos de node
+|-- src/
+|    |-- config/
+|    |   |-- db.js                   # Configuración de la conexión a la base de datos
+|    |-- controllers/
+|    |   |-- taskController.js       # Controlador para operaciones de tareas
+|    |   |-- userController.js       # Controlador para operaciones de usuarios
+|    |-- middleware/
+|    |   |-- authenticate.js         # Middleware para autenticación de usuarios
+|    |-- routes/
+|    |   |-- taskRoutes.js           # Rutas para tareas
+|    |   |-- userRoutes.js           # Rutas para usuarios
+|    |-- models/
+|    |   |-- taskModel.js            # Modelo de datos para tareas (opcional)
+|    |   |-- userModel.js            # Modelo de datos para usuarios (opcional)
+|    |-- app.js                      # Configuración de la aplicación Express
+|    |-- server.js                   # Archivo principal para iniciar el servidor
+|-- .env                             # Archivo de configuración de variables de entorno
+|-- package-lock.json
+|-- package.json
+|-- README.md                        # Documentación del proyecto
