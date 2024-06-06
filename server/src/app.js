@@ -1,17 +1,15 @@
 import express from "express";
-import sequelize from "./config/db.js";
+import TaskDatabase from "./config/db.js";
+import TaskRoutes from './routes/task.routes.js';
+import UserRouter from './routes/user.routes.js';
 const app = express();
 const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.use('/api/', TaskRoutes);
 
-// app.listen(port, () => {
-//   console.log(`Task Tracker listening on port ${port}`);
-// });
+app.use('/api/', UserRouter);
 
-sequelize.sync().then(() => {
+TaskDatabase.sync().then(() => {
   app.listen(port, () => {
     console.log(`Task Tracker listening on port ${port}`);
   });
