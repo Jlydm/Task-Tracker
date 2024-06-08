@@ -4,8 +4,8 @@ import TaskDatabase from "../config/db.js";
 const User = TaskDatabase.define("users", {
   user_id: {
     type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     allowNull: false,
-    autoIncrement: true,
     primaryKey: true,
   },
   name: {
@@ -23,4 +23,4 @@ const User = TaskDatabase.define("users", {
   },
 });
 
-module.exports = User;
+export default User;

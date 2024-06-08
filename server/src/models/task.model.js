@@ -34,4 +34,4 @@ const Task = TaskDatabase.define('tasks', {
 User.hasMany(Task, {foreignKey: 'user_id'});
 Task.belongTo(User, {foreignKey: 'user_id'});
 
-module.exports = Task;
+export default Task;

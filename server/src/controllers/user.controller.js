@@ -1,6 +1,15 @@
+import User from "../models/user.model.js";
+
 // CRUD → Create
 export const createUser = async (req, res) => {
-  res.send("Create user Santi");
+  try {
+    const { name, email, password } = req.body;
+    const newUser = await User.create({ name, email, password });
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error("Error creating user:", err);
+    res.status(500).json({ message: "Error creating user" });
+  }
 };
 
 // CRUD → Read
