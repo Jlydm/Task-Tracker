@@ -10,6 +10,6 @@ router.get("/getallusers", getAllUsers);
 
 router.put("/updateuser/:id", updateUser);
 
-router.get("/deleteuser", deleteUser);
+router.delete("/deleteuser/:id", deleteUser);
 
 export default router;

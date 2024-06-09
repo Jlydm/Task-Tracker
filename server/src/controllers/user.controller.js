@@ -67,38 +67,51 @@ export const updateUser = async (req, res) => {
     }
 
     // Verify if the name exist and not is the same user
-    if (name && name !== userExist.name){
+    if (name && name !== userExist.name) {
       const existingUserByName = await User.findOne({ where: { name } });
       if (existingUserByName && existingUserByName.user_id !== id) {
-        return res.status(400).json({ message: 'Name already in use' });
+        return res.status(400).json({ message: "Name already in use" });
       }
     }
 
     // Verify if the email exist and not is the same user
-    if (email && email !== userExist.email){
+    if (email && email !== userExist.email) {
       const existingUserByEmail = await User.findOne({ where: { email } });
       if (existingUserByEmail && existingUserByEmail.user_id !== id) {
-        return res.status(400).json({ message: 'A user is registered with this email' });
+        return res
+          .status(400)
+          .json({ message: "A user is registered with this email" });
       }
     }
 
     // Update the user
-    await User.update(
-      { name, email, password },
-      { where: { user_id: id } }
-    )
+    await User.update({ name, email, password }, { where: { user_id: id } });
 
     // User update
     const updateUser = await User.findByPk(id);
     res.status(200).json(updateUser);
-
   } catch (err) {
-    console.error('Error updating user:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error updating user:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 // CRUD → Delete
 export const deleteUser = async (req, res) => {
-  res.send("Delete user Santi");
+  try {
+    const { id } = req.params;
+    const name = req.body.name;
+
+    const deleteUser = await User.destroy({
+      where: {
+        user_id: id,
+        name: name,
+      },
+    });
+    
+    res.status(200).json(deleteUser);
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
