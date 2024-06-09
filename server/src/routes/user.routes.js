@@ -8,7 +8,7 @@ router.get("/getuser", getUser);
 
 router.get("/getallusers", getAllUsers);
 
-router.get("/updateuser", updateUser);
+router.put("/updateuser/:id", updateUser);
 
 router.get("/deleteuser", deleteUser);
 
