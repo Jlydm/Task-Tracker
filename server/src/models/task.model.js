@@ -1,12 +1,13 @@
 import { DataTypes } from "sequelize";
-import TaskDatabase from "../config/db.s";
-import User from "./user.model.js"
+import BelongsTo from "sequelize";
+import TaskDatabase from "../config/db.js";
+import User from "./user.model.js";
 
-const Task = TaskDatabase.define('tasks', {
+const Task = TaskDatabase.define("tasks", {
   task_id: {
     type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     allowNull: false,
-    autoIncrement: true,
     primaryKey: true,
   },
   title: {
@@ -17,21 +18,26 @@ const Task = TaskDatabase.define('tasks', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  password: {
-    type: DataTypes.STRING,
+  date: {
+    type: DataTypes.DATEONLY, // YYYY-MM-DD
     allowNull: false,
+    validate: {
+      isDate: true, 
+      isAfter: new Date().toISOString().split('T')[0],
+    }
   },
   user_id: {
     type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     references: {
       model: User,
-      key: 'user_id',
-    }
-  }
-})
+      key: "user_id",
+    },
+  },
+});
 
 // 1:M
-User.hasMany(Task, {foreignKey: 'user_id'});
-Task.belongTo(User, {foreignKey: 'user_id'});
+User.hasMany(Task, { foreignKey: 'user_id' });
+Task.belongsTo(User, { foreignKey: 'user_id' });
 
 export default Task;

@@ -1,4 +1,4 @@
-import { where } from "sequelize";
+// import { where } from "sequelize";
 import User from "../models/user.model.js";
 
 // CRUD → Create
