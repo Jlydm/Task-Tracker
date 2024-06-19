@@ -21,3 +21,8 @@ server/
 |-- package-lock.json
 |-- package.json
 |-- README.md                        # Documentación del proyecto
+
+
+<-- Nota -->
+- Las validaciones sacarlas en un archivo aparte (porque se repiten) ↓
+  para esto crea un objeto y lo exportas ya luego solo importas y usas la validacion (obj.name || obj.email)
