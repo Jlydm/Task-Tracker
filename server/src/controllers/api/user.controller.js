@@ -1,21 +1,19 @@
-// import { where } from "sequelize";
-import User from "../models/user.model.js";
+import { Op } from "sequelize";
+import User from "../../models/user.model.js";
 
 // CRUD → Create
 export const createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const existingUserByName = await User.findOne({ where: { name } });
-    if (existingUserByName) {
-      return res.status(409).json({ message: "Name already in use" });
-    }
+    const existingUserBy = await User.findOne({
+      where: {
+        [Op.or]: [{ name: name }, { email: email }]
+      }
+    })
 
-    const existingUserByEmail = await User.findOne({ where: { email } });
-    if (existingUserByEmail) {
-      return res
-        .status(409)
-        .json({ message: "A user is registered with this email" });
+    if (existingUserBy) {
+      return res.status(409).json({ message: "Is already in use" });
     }
 
     const newUser = await User.create({ name, email, password });
@@ -34,7 +32,7 @@ export const getUser = async (req, res) => {
     if (findUser) {
       res.status(200).json(findUser);
     } else {
-      res.status(404).json({ message: "Error searching user" });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
@@ -108,7 +106,7 @@ export const deleteUser = async (req, res) => {
         name: name,
       },
     });
-    
+
     res.status(200).json(deleteUser);
   } catch (err) {
     console.error("Error deleting user:", err);

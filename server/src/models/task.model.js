@@ -26,6 +26,9 @@ const Task = TaskDatabase.define("tasks", {
       isAfter: new Date().toISOString().split('T')[0],
     }
   },
+  state: {
+    type: DataTypes.BOOLEAN,
+  },
   user_id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,

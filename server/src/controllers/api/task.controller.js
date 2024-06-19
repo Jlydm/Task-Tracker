@@ -1,14 +1,15 @@
-import Task from "../models/task.model.js";
+import Task from "../../models/task.model.js";
 
 // CRUD → Create
 export const createTask = async (req, res) => {
   try {
-    const { title, text, user_id, date } = req.body;
+    const { title, text, user_id, date, state } = req.body;
 
     const newTaks = await Task.create({
       title,
       text,
       date,
+      state,
       user_id,
     });
     res.status(201).json(newTaks);
@@ -48,10 +49,10 @@ export const getAllTasks = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const task_id = req.params.id;
-    const { title, text, date, user_id } = req.body;
+    const { title, text, date, state, user_id } = req.body;
 
     await Task.update(
-      { title, text, date },
+      { title, text, date, state },
       { where: { task_id: task_id, user_id: user_id } }
     );
     const updateTask = await Task.findOne({ where: { task_id: task_id, user_id: user_id } })
