@@ -7,7 +7,6 @@ package-lock.json
 
 # Archivos de proyecto específicos
 info.txt
-.gitignore
 
 # Archivos generados automáticamente
 dist/
