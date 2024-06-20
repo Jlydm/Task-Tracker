@@ -5,24 +5,31 @@ server/
 |    |-- config/
 |    |   |-- db.js                   # Configuración de la conexión a la base de datos
 |    |-- controllers/
-|    |   |-- taskController.js       # Controlador para operaciones de tareas
-|    |   |-- userController.js       # Controlador para operaciones de usuarios
+|    |   |--api/
+|    |   |   |-- task.controller.js       # Controlador para operaciones de tareas
+|    |   |   |-- user.controller.js       # Controlador para operaciones de usuarios
+|    |   |-- web/
+|    |   |   |-- web.controller.js       # Controlador para operaciones de la web
 |    |-- middleware/
 |    |   |-- authenticate.js         # Middleware para autenticación de usuarios
 |    |-- routes/
-|    |   |-- taskRoutes.js           # Rutas para tareas
-|    |   |-- userRoutes.js           # Rutas para usuarios
+|    |   |--api/
+|    |   |   |-- task.routes.js           # Rutas para tareas
+|    |   |   |-- user.routes.js           # Rutas para usuarios
+|    |   |-- web/
+|    |   |   |-- web.routes.js           # Rutas para web
 |    |-- models/
 |    |   |-- taskModel.js            # Modelo de datos para tareas (opcional)
 |    |   |-- userModel.js            # Modelo de datos para usuarios (opcional)
+|    |-- .env                        # Archivo de configuración de variables de entorno                     
 |    |-- app.js                      # Configuración de la aplicación Express
 |    |-- server.js                   # Archivo principal para iniciar el servidor
-|-- .env                             # Archivo de configuración de variables de entorno
+|-- .gitignore                             
+|-- info.txt                             
 |-- package-lock.json
 |-- package.json
 |-- README.md                        # Documentación del proyecto
 
 
 <-- Nota -->
-- Las validaciones sacarlas en un archivo aparte (porque se repiten) ↓
-  para esto crea un objeto y lo exportas ya luego solo importas y usas la validacion (obj.name || obj.email)
+Revisar el logOut

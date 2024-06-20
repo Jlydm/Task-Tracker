@@ -1,41 +1,56 @@
+import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 import User from "../../models/user.model.js";
 
-// CRUD → Create
+// Function to check if the user exist by name or email
+const checkUserExist = async (name, email) => {
+  return await User.findOne({
+    where: {
+      [Op.or]: [{ name }, { email }],
+    },
+  });
+};
+
+// Function to check if user exists by ID
+const findUserById = async (id) => {
+  return await User.findByPk(id);
+};
+
 export const createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const existingUserBy = await User.findOne({
-      where: {
-        [Op.or]: [{ name: name }, { email: email }]
-      }
-    })
-
-    if (existingUserBy) {
-      return res.status(409).json({ message: "Is already in use" });
+    if (checkUserExist(name, email)) {
+      return res
+        .status(409)
+        .json({ message: "The name or email are already in use" });
     }
 
-    const newUser = await User.create({ name, email, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
     res.status(201).json(newUser);
   } catch (err) {
-    console.error("Error creating user:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
 
-// CRUD → Read
 export const getUser = async (req, res) => {
   try {
-    const user_id = req.body.user_id;
-    const findUser = await User.findByPk(user_id);
-    if (findUser) {
-      res.status(200).json(findUser);
+    const { user_id } = req.body;
+    const user = findUserById(user_id);
+
+    if (user) {
+      res.status(200).json(user);
     } else {
       res.status(404).json({ message: "User not found" });
     }
   } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
 
@@ -44,57 +59,46 @@ export const getAllUsers = async (req, res) => {
     const findAllUser = await User.findAll();
     res.status(200).json(findAllUser);
   } catch (err) {
-    console.error("Error searching users:", err);
-    res.status(404).json({ message: "Error searching all users" });
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
 
-// CRUD → Update
 export const updateUser = async (req, res) => {
   try {
-    // Take the id from the rute (use the ":")
     const { id } = req.params;
-
     const { name, email, password } = req.body;
+    const user = findUserById(id);
 
-    // Verify if the user exist
-    const userExist = await User.findByPk(id);
-    // If no exist return error
-    if (!userExist) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Verify if the name exist and not is the same user
-    if (name && name !== userExist.name) {
-      const existingUserByName = await User.findOne({ where: { name } });
-      if (existingUserByName && existingUserByName.user_id !== id) {
-        return res.status(400).json({ message: "Name already in use" });
-      }
+    if ( name && name !== user.name && (await User.findOne({ where: { name } })) ) { 
+      return res.status(400).json({ message: "Name already in use" });
     }
 
-    // Verify if the email exist and not is the same user
-    if (email && email !== userExist.email) {
-      const existingUserByEmail = await User.findOne({ where: { email } });
-      if (existingUserByEmail && existingUserByEmail.user_id !== id) {
-        return res
-          .status(400)
-          .json({ message: "A user is registered with this email" });
-      }
+    if ( email && email !== user.email && (await User.findOne({ where: { email } })) ) {
+      return res.status(400).json({ message: "Name already in use" });
     }
 
-    // Update the user
-    await User.update({ name, email, password }, { where: { user_id: id } });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.update(
+      { 
+        name, 
+        email, 
+        password: hashedPassword 
+      }, { where: { user_id: id } }
+    );
 
     // User update
     const updateUser = await User.findByPk(id);
     res.status(200).json(updateUser);
   } catch (err) {
-    console.error("Error updating user:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// CRUD → Delete
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -103,13 +107,16 @@ export const deleteUser = async (req, res) => {
     const deleteUser = await User.destroy({
       where: {
         user_id: id,
-        name: name,
+        name,
       },
     });
 
-    res.status(200).json(deleteUser);
+    if (deleteUser === 0) {
+      return res.status(404).json({ message: "User not found or name does not match" });
+    }
+
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
-    console.error("Error deleting user:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };

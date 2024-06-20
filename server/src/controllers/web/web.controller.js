@@ -1,50 +1,52 @@
 import { Op } from "sequelize";
-import User from "../../models/user.model.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import User from "../../models/user.model.js";
 
 export const logIn = async (req, res) => {
-  // Video en 5:56:20
   try {
     const { name, email, password } = req.body;
 
-    const id = new Date().getDate();
-
-    const token = jwt.sign({ id, name }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
+    // Find one user with this info
     const correctUser = await User.findOne({
       where: {
-        [Op.and]: [{ name: name }, { email: email }, { password: password }],
+        [Op.and]: [{ name }, { email }],
       },
     });
 
     if (!correctUser) {
-      res.status(404).send({ message: "Error..." });
+      res.status(401).send({ message: "Invalid name or email..." });
     }
+
+    // Compare the passwords
+    const validPassword = await bcrypt.compare(password, correctUser.password);
+    if (!validPassword) {
+      res.status(401).send({ message: "Invalid password..." });
+    }
+
+    const token = jwt.sign({ id: correctUser.user_id, name, email },
+      process.env.JWT_SECRET, 
+      { expiresIn: "1h" }
+    );
 
     res.status(200).send({ message: `Welcome ${name}`, token });
   } catch (err) {
-    console.error("Login error", err);
-    res.status(500).send({ message: "Internal server error" });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 };
 
 export const logOut = async (req, res) => {
-  res.send("Hello");
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
 export const dashboard = async (req, res) => {
   try {
-    console.log(req.user)
     const luckyNumber = Math.floor(Math.random() * 100);
-
     res.status(200).json({
       message: `Hello ${req.user.name}`,
       secret: `Here is your authorized data, you'r lucky number is ${luckyNumber}`,
     });
   } catch (err) {
-    onsole.log(err);
-    res.status(500).json({ message: "Internal Server Error", err });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

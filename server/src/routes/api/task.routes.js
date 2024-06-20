@@ -1,15 +1,14 @@
 import { Router } from 'express';
-import { getTask, getAllTasks, createTask, updateTask, deleteTask } from '../../controllers/api/task.controller.js';
+import { getAllTasks, createTask, updateTask, deleteTask } from '../../controllers/api/task.controller.js';
+import { authenticationMiddleware } from '../../middleware/authenticate.js';
 const router = Router();
 
-router.post("/createtask", createTask);
+router.post("/createtask", authenticationMiddleware, createTask);
 
-router.get("/gettask", getTask);
+router.get("/getalltask", authenticationMiddleware, getAllTasks);
 
-router.get("/getalltask", getAllTasks);
+router.put("/updatetask/:id", authenticationMiddleware, updateTask);
 
-router.put("/updatetask/:id", updateTask);
-
-router.delete("/deletetask/:id", deleteTask);
+router.delete("/deletetask/:id", authenticationMiddleware, deleteTask);
 
 export default router;

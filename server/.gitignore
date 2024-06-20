@@ -1,3 +1,22 @@
-/node_modules
+# Node.js
+node_modules/
+package-lock.json
+
+# Ambiente
 .env
+
+# Archivos de proyecto específicos
 info.txt
+.gitignore
+
+# Archivos generados automáticamente
+dist/
+coverage/
+logs/
+*.log
+*.tmp
+*.temp
+
+# Archivos de sistema de Windows
+thumbs.db
+desktop.ini

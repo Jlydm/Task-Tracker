@@ -12,9 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/v1", UserRoutes);
-
 app.use("/api/v1", TaskRoutes);
-
 app.use("/main/v1", MainRoutes);
 
 // Synchronizing the database

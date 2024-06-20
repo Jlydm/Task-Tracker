@@ -10,13 +10,25 @@ export const authenticationMiddleware = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const {id, name} = decoded;
-    req.user = {id, name}
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        if (err.name === "JsonWebTokenError") {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+        if (err.name === "TokenExpiredError") {
+          return res.status(401).json({ message: "Token expired" });
+        }
+        return res.status(401).json({ message: "Authentication failed" });
+      }
+
+      req.user = {
+        id: decoded.id,
+        name: decoded.name,
+      };
+    });
 
     next();
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal Server Error", err });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
